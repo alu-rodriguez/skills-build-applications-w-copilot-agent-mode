@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-v_o)brt__*&!unv7o+pu&#jo#^_us=pnjq3j_+5wu64g=x=+#2
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -37,9 +37,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'octofit_tracker',
     'rest_framework',
-    'rest_framework.authtoken',
+    'djongo',
     'corsheaders',
+    'rest_framework.authtoken',
     'django.contrib.sites',
     'allauth',
     'allauth.account',
@@ -83,25 +85,21 @@ WSGI_APPLICATION = 'octofit_tracker.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
-# Database
-# https://docs.djangoproject.com/en/4.1/ref/settings/#databases
-
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'djongo',
+        'NAME': 'octofit_db',
+        'CLIENT': {
+            'host': 'mongodb+srv://pulpo:gat0@cluster0.74ook8q.mongodb.net/octofit_db?retryWrites=true&w=majority&appName=Cluster0',
+        }
     }
 }
+# CORS settings
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_HEADERS = ['*']
+CORS_ALLOW_METHODS = ['DELETE', 'GET', 'OPTIONS', 'PATCH', 'POST', 'PUT']
 
-# MongoDB Configuration (uncomment when ready to use MongoDB Atlas)
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'djongo',
-#         'NAME': 'octofit_tracker',
-#         'CLIENT': {
-#             'host': 'mongodb+srv://pulpo:gat0@cluster0.74ook8q.mongodb.net/octofit_tracker?retryWrites=true&w=majority&appName=Cluster0',
-#         }
-#     }
 # }
 
 
@@ -160,25 +158,17 @@ CORS_ALLOW_CREDENTIALS = True
 # REST Framework settings
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'dj_rest_auth.jwt_auth.JWTCookieAuthentication',
         'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',
+        'rest_framework.permissions.AllowAny',
     ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 20
 }
 
-# JWT Authentication settings
-REST_USE_JWT = True
-JWT_AUTH_COOKIE = 'octofit-auth'
-JWT_AUTH_REFRESH_COOKIE = 'octofit-refresh-token'
-
 # Account settings
 ACCOUNT_EMAIL_VERIFICATION = 'none'
 ACCOUNT_AUTHENTICATION_METHOD = 'username'
 ACCOUNT_EMAIL_REQUIRED = False
-
-# Allow connections from localhost for development
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0']
