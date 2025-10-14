@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,7 +26,13 @@ SECRET_KEY = 'django-insecure-v_o)brt__*&!unv7o+pu&#jo#^_us=pnjq3j_+5wu64g=x=+#2
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+# Get Codespace name from environment variable
+CODESPACE_NAME = os.getenv('CODESPACE_NAME')
+
+# Configure allowed hosts for both localhost and Codespaces
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0']
+if CODESPACE_NAME:
+    ALLOWED_HOSTS.append(f'{CODESPACE_NAME}-8000.app.github.dev')
 
 
 # Application definition
@@ -100,7 +107,11 @@ CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_HEADERS = ['*']
 CORS_ALLOW_METHODS = ['DELETE', 'GET', 'OPTIONS', 'PATCH', 'POST', 'PUT']
 
-# }
+# CSRF settings for Codespaces
+if CODESPACE_NAME:
+    CSRF_TRUSTED_ORIGINS = [f'https://{CODESPACE_NAME}-8000.app.github.dev']
+else:
+    CSRF_TRUSTED_ORIGINS = ['http://localhost:8000', 'http://127.0.0.1:8000']
 
 
 # Password validation
@@ -152,6 +163,9 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
 ]
+
+if CODESPACE_NAME:
+    CORS_ALLOWED_ORIGINS.append(f'https://{CODESPACE_NAME}-3000.app.github.dev')
 
 CORS_ALLOW_CREDENTIALS = True
 
